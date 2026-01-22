@@ -5,6 +5,7 @@ import { PageSources } from '../Page/PageSources';
 import {
   dateFilter,
   SetExternalExtension,
+  FolderExtension,
 } from '../lib/nunjucks-extensions';
 import * as fsUtil from '../utils/fsUtil';
 
@@ -25,6 +26,7 @@ export class VariableRenderer {
     this.nj = nunjucks.configure(siteRootPath, { autoescape: false });
     this.nj.addFilter('date', dateFilter);
     this.nj.addExtension('SetExternalExtension', new SetExternalExtension(siteRootPath, this.nj));
+    this.nj.addExtension('FolderExtension', new FolderExtension(siteRootPath, this.nj));
     this.nj.on('load', (name, source) => {
       this.pageSources.staticIncludeSrc.push({ to: source.path });
     });
