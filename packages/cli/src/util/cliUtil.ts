@@ -35,7 +35,7 @@ function tryDeleteFolder(pathName: string) {
 }
 
 export function findRootFolder(
-  userSpecifiedRoot: string, siteConfigPath: string = SITE_CONFIG_NAME): string {
+  userSpecifiedRoot: string | undefined, siteConfigPath: string = SITE_CONFIG_NAME): string {
   if (userSpecifiedRoot) {
     const resolvedUserSpecifiedRoot = path.resolve(userSpecifiedRoot);
     const expectedConfigPath = path.join(resolvedUserSpecifiedRoot, siteConfigPath);

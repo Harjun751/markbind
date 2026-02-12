@@ -113,7 +113,7 @@ export class Site {
    * @param ciTokenVar The CI token variable to use for authentication.
    * @returns A promise that resolves when the deployment is complete.
    */
-  async deploy(ciTokenVar: string | boolean) {
+  async deploy(ciTokenVar: string | boolean | undefined) {
     const config = await this.readSiteConfig();
     this.deployManager.siteConfig = config;
     return this.deployManager.deploy(ciTokenVar);

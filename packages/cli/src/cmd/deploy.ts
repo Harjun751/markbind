@@ -8,7 +8,13 @@ const _ = {
   isError,
 };
 
-function deploy(userSpecifiedRoot: string, options: any) {
+type DeployOptions = {
+  ci?: string | true | undefined;
+  build: boolean;
+  siteConfig?: string | undefined;
+};
+
+function deploy(userSpecifiedRoot: string | undefined, options: DeployOptions) {
   let rootFolder;
   try {
     rootFolder = cliUtil.findRootFolder(userSpecifiedRoot, options.siteConfig);

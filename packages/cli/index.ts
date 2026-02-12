@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Entry file for MarkBind project
-import { program } from 'commander';
+import { program } from '@commander-js/extra-typings';
 import * as logger from './src/util/logger';
 import { build } from './src/cmd/build';
 import { deploy } from './src/cmd/deploy';

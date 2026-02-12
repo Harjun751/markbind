@@ -2,6 +2,7 @@ import chokidar from 'chokidar';
 import path from 'path';
 import readline from 'readline';
 import isError from 'lodash/isError';
+import isBoolean from 'lodash/isBoolean';
 
 import { Site } from '@markbind/core';
 import { pageVueServerRenderer } from '@markbind/core/src/Page/PageVueServerRenderer';
@@ -24,8 +25,20 @@ import {
   isIPAddressZero,
 } from '../util/ipUtil';
 
+type ServeOptions = {
+  forceReload?: boolean | undefined;
+  open: boolean;
+  onePage?: string | true | undefined;
+  backgroundBuild?: boolean | undefined;
+  port?: string | undefined;
+  siteConfig?: string | undefined;
+  dev?: boolean | undefined;
+  address?: string | undefined;
+};
+
 const _ = {
   isError,
+  isBoolean,
 };
 
 function questionAsync(question: string): Promise<string> {
@@ -39,7 +52,7 @@ function questionAsync(question: string): Promise<string> {
   });
 }
 
-function serve(userSpecifiedRoot: string, options: any) {
+function serve(userSpecifiedRoot: string | undefined, options: ServeOptions) {
   if (options.dev) {
     logger.useDebugConsole();
   }
@@ -85,7 +98,11 @@ function serve(userSpecifiedRoot: string, options: any) {
     logger.info('All opened pages will be reloaded.');
     liveServer.reloadActiveTabs();
   };
+  if (!onePagePath) {
+    onePagePath = '';
+  }
 
+  options.backgroundBuild = _.isBoolean(options.backgroundBuild);
   const site = new Site(rootFolder, outputFolder, onePagePath,
                         options.forceReload, options.siteConfig, options.dev,
                         options.backgroundBuild, reloadAfterBackgroundBuild);
@@ -156,10 +173,11 @@ function serve(userSpecifiedRoot: string, options: any) {
         ],
         ignoreInitial: true,
       });
+      const isOnePagePath = _.isBoolean(onePagePath);
       watcher
-        .on('add', addHandler(site, onePagePath))
-        .on('change', changeHandler(site, onePagePath))
-        .on('unlink', removeHandler(site, onePagePath));
+        .on('add', addHandler(site, isOnePagePath))
+        .on('change', changeHandler(site, isOnePagePath))
+        .on('unlink', removeHandler(site, isOnePagePath));
     })
     .then(() => {
       const server = liveServer.start(serverConfig);

@@ -10,7 +10,12 @@ const _ = {
   isError,
 };
 
-function build(userSpecifiedRoot: string, output: string, options: any) {
+type BuildOptions = {
+  baseUrl?: string | true | undefined;
+  siteConfig?: string | undefined;
+};
+
+function build(userSpecifiedRoot: string | undefined, output: string | undefined, options: BuildOptions) {
   // if --baseUrl contains no arguments (options.baseUrl === true) then set baseUrl to empty string
   const baseUrl = _.isBoolean(options.baseUrl) ? '' : options.baseUrl;
 

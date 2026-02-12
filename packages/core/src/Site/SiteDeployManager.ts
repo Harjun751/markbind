@@ -28,7 +28,7 @@ export class SiteDeployManager {
     this.outputPath = outputPath;
   }
 
-  deploy(ciTokenVar: string | boolean) {
+  deploy(ciTokenVar: string | boolean | undefined) {
     const defaultDeployConfig: DeployOptions = {
       branch: 'gh-pages',
       message: 'Site Update.',
@@ -42,7 +42,7 @@ export class SiteDeployManager {
   /**
    * Helper function for deploy(). Returns the ghpages link where the repo will be hosted.
    */
-  async generateDepUrl(ciTokenVar: boolean | string, defaultDeployConfig: DeployOptions) {
+  async generateDepUrl(ciTokenVar: boolean | string | undefined, defaultDeployConfig: DeployOptions) {
     if (!this.siteConfig) {
       throw new Error('Site config not initialized');
     }
@@ -58,7 +58,7 @@ export class SiteDeployManager {
   /**
    * Helper function for deploy(). Set the options needed to be used by ghpages.publish.
    */
-  async getDepOptions(ciTokenVar: boolean | string, defaultDeployConfig: DeployOptions,
+  async getDepOptions(ciTokenVar: boolean | string | undefined, defaultDeployConfig: DeployOptions,
                       publish: (basePath: string, options: PublishOptions) => Promise<void>) {
     const basePath = this.siteConfig.deploy.baseDir || this.outputPath;
     if (!fs.existsSync(basePath)) {

@@ -10,7 +10,12 @@ const _ = {
   isError,
 };
 
-async function init(root: string, options: any) {
+type InitOptions = {
+  template: string;
+  convert?: any;
+};
+
+async function init(root: string | undefined, options: InitOptions) {
   const rootFolder = path.resolve(root || process.cwd());
 
   if (options.convert) {
