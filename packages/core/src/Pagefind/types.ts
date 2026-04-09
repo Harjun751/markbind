@@ -4,6 +4,8 @@
  * @see https://pagefind.app/docs/api-reference
  */
 
+import { FormattedSearchResult } from './FormattedSearchResult.js';
+
 /**
  * Information about a matching word on a page.
  *
@@ -111,28 +113,4 @@ export interface PagefindSearchFragment {
   sub_results: PagefindSubResult[];
 }
 
-/**
- * Formatted search result ready for display in the UI.
- * This is the output of the formatting utilities in searchUtils.ts.
- */
-export interface FormattedSearchResult {
-  /** The URL to navigate to when selected */
-  route: string;
-  /** Processed metadata for display */
-  meta: {
-    /** Optional date for sorting/display */
-    date?: number;
-    /** Display title (may include hierarchical breadcrumbs) */
-    title: string;
-    /** Excerpt with highlighted terms */
-    description: string;
-    /** Additional metadata properties */
-    [key: string]: unknown;
-  };
-  /** Reference to the original raw Pagefind result */
-  result: PagefindSearchFragment;
-  /** Whether this result is a sub-result (heading within a page) vs main result (full page) */
-  isSubResult: boolean;
-  /** Whether this is the last sub-result before a new main result (used for icon styling) */
-  isLastSubResult: boolean;
 }

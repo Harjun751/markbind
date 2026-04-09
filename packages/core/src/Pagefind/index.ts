@@ -4,6 +4,8 @@ export type{
   PagefindMeta,
   PagefindSubResult,
   PagefindSearchFragment,
-  FormattedSearchResult,
 } from './types.js';
+
+export { FormattedSearchResult } from './FormattedSearchResult.js';
+
 export * from './searchUtils.js';

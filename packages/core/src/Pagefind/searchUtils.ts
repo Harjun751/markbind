@@ -6,67 +6,9 @@
 
 import { isNumber } from 'lodash';
 import type {
-  PagefindSearchFragment, PagefindSubResult, PagefindSearchAnchor, FormattedSearchResult,
+  PagefindSearchFragment, PagefindSubResult, PagefindSearchAnchor,
 } from './types.js';
-
-/**
- * Truncates an excerpt to ensure the <mark> tags are visible.
- * - Shows max 15 chars before <mark>
- * - Shows all content after <mark> (no limit)
- * - Adds ellipsis if prefix doesn't start at word boundary
- * - Handles HTML entities in the prefix
- *
- * @param excerpt - The raw excerpt from Pagefind
- * @returns Truncated excerpt with <mark> visible
- */
-function truncateExcerptToShowMark(excerpt: string): string {
-  const markStart = excerpt.indexOf('<mark>');
-
-  // No mark found, return as is
-  if (markStart === -1) return excerpt;
-
-  // If mark is at position 0, return as is
-  if (markStart === 0) return excerpt;
-
-  // Get up to 15 chars before <mark>
-  const prefix = excerpt.substring(0, markStart);
-  const truncatedPrefix = prefix.slice(-15); // Last 15 chars
-
-  // Check if starts at word boundary:
-  // - Any whitespace (space, tab, newline)
-  // - Any non-alphanumeric character
-  const firstChar = truncatedPrefix[0];
-  const isWordBoundary = /[\s\d_\-.,;:'"()[\]{}|\\/@#$%^&*!~`]/.test(firstChar);
-
-  if (!isWordBoundary) {
-    // Find the first word boundary in the prefix (within 15 chars of end)
-    const searchArea = prefix.slice(-15);
-    const wordBoundaryMatch = searchArea.match(/[\s\d_\-.,;:'"()[\]{}|\\/@#$%^&*!~`]/);
-    if (wordBoundaryMatch) {
-      const lastBoundaryIndex = prefix.lastIndexOf(wordBoundaryMatch[0], markStart - 1);
-      if (lastBoundaryIndex !== -1 && lastBoundaryIndex < markStart) {
-        return `...${prefix.substring(lastBoundaryIndex + 1)}${excerpt.substring(markStart)}`;
-      }
-    }
-    // Fallback: use ellipsis + truncated
-    return `...${truncatedPrefix}${excerpt.substring(markStart)}`;
-  }
-
-  // Starts at word boundary, no ellipsis needed
-  return truncatedPrefix + excerpt.substring(markStart);
-}
-
-/**
- * Merges consecutive <mark> tags into a single <mark> tag.
- * e.g., "<mark>making</mark> <mark>the</mark>" becomes "<mark>making the</mark>"
- * This ensures that terms grouped together in the excerpt are displayed as a single highlighted segment.
- *
- * @param excerpt - The excerpt with potential consecutive <mark> tags
- * @returns Excerpt with merged <mark> tags
- */
-function mergeConsecutiveMarks(excerpt: string): string {
-  return excerpt.replace(/<\/mark>\s*<mark>/g, ' ');
-}
+import { FormattedSearchResult } from './FormattedSearchResult.js';
 
 /**
  * Parses a single sub-result (heading/section) within a page into a display-ready format.
@@ -90,21 +32,7 @@ function parseSubResult(
   anchors: PagefindSearchAnchor[],
   result: PagefindSearchFragment,
 ): FormattedSearchResult {
-  const route = sub?.url || result?.url;
-  const description = mergeConsecutiveMarks(truncateExcerptToShowMark(sub?.excerpt || result?.excerpt || ''));
-  const title = sub.title || '';
-
-  return {
-    route,
-    meta: {
-      ...result.meta,
-      title,
-      description,
-    },
-    result,
-    isSubResult: true,
-    isLastSubResult: false,
-  };
+  return new FormattedSearchResult(result, sub);
 }
 
 /**
@@ -150,19 +78,7 @@ export function formatPagefindResult(
 
   // If no sub_results, return the main result as a non-sub-result
   if (!subResults || subResults.length === 0) {
-    return [
-      {
-        route: result.url,
-        meta: {
-          ...result.meta,
-          title: result.meta.title || '',
-          description: mergeConsecutiveMarks(truncateExcerptToShowMark(result.excerpt || '')),
-        },
-        result,
-        isSubResult: false,
-        isLastSubResult: false,
-      },
-    ];
+    return [new FormattedSearchResult(result)];
   }
 
   const sortedLocations = [...weightedLocations].sort((a, b) => {
@@ -233,19 +149,7 @@ export function formatPagefindResult(
   });
 
   // Return main result first, then sub-results
-  const mainResult = [
-    {
-      route: result.url,
-      meta: {
-        ...result.meta,
-        title: result.meta.title || '',
-        description: mergeConsecutiveMarks(truncateExcerptToShowMark(result.excerpt || '')),
-      },
-      result,
-      isSubResult: false,
-      isLastSubResult: false,
-    },
-  ];
+  const mainResult = new FormattedSearchResult(result);
 
-  return [...mainResult, ...formattedSubResults];
+  return [mainResult, ...formattedSubResults];
 }
