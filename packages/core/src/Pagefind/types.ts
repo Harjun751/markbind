@@ -113,4 +113,7 @@ export interface PagefindSearchFragment {
   sub_results: PagefindSubResult[];
 }
 
+export interface GroupedSearchResult {
+  name: string,
+  results: FormattedSearchResult[]
 }

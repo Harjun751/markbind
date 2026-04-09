@@ -223,100 +223,106 @@ onUnmounted(() => {
               class="search-results"
             >
               <div
-                v-for="(result, index) in searchResults"
-                :key="result.route"
-                :class="['search-result-item', { active: index === selectedIndex }]"
-                @click="handleResultClick(result)"
-                @mouseenter="handleResultMouseEnter(index)"
+                v-for="(group, grp_idx) in searchResults"
+                :key="grp_idx"
               >
-                <!-- Main result: single icon -->
-                <div v-if="!result.isSubResult" class="result-icon">
-                  <svg
-                    class="DocSearch-Hit-icon"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      d="M17 6v12c0 .52-.2 1-1 1H4c-.7 0-1-.33-1-1V2
-                      c0-.55.42-1 1-1h8l5 5zM14 8h-3.13c-.51 0-.87-.34-.87-.87V4"
-                      stroke="currentColor"
-                      fill="none"
-                      fill-rule="evenodd"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </div>
-                <!-- Sub-result: two icons for indentation -->
-                <template v-else>
-                  <div class="result-icon">
+                <h1>{{ group.name }}</h1>
+                <div
+                  v-for="(result, index) in group.results"
+                  :key="result.route"
+                  :class="['search-result-item', { active: index === selectedIndex }]"
+                  @click="handleResultClick(result)"
+                  @mouseenter="handleResultMouseEnter(index)"
+                >
+                  <!-- Main result: single icon -->
+                  <div v-if="!result.isSubResult" class="result-icon">
                     <svg
-                      class="DocSearch-Hit-Tree"
-                      viewBox="0 0 24 54"
-                    >
-                      <g
-                        v-if="!result.isLastSubResult"
-                        stroke="currentColor"
-                        fill="none"
-                        fill-rule="evenodd"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M8 6v42M20 27H8.3" />
-                      </g>
-                      <g
-                        v-else
-                        stroke="currentColor"
-                        fill="none"
-                        fill-rule="evenodd"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M8 6v21M20 27H8.3" />
-                      </g>
-                    </svg>
-                  </div>
-                  <div class="result-icon-sub">
-                    <svg
-                      class="DocSearch-Hit-Hash"
+                      class="DocSearch-Hit-icon"
                       viewBox="0 0 20 20"
                     >
                       <path
-                        d="M13 13h4-4V8H7v5h6v4-4H7V8H3h4V3v5h6V3v5h4-4v5zm-6 0v4-4H3h4z"
+                        d="M17 6v12c0 .52-.2 1-1 1H4c-.7 0-1-.33-1-1V2
+                        c0-.55.42-1 1-1h8l5 5zM14 8h-3.13c-.51 0-.87-.34-.87-.87V4"
                         stroke="currentColor"
                         fill="none"
                         fill-rule="evenodd"
-                        stroke-linecap="round"
                         stroke-linejoin="round"
                       />
                     </svg>
                   </div>
-                </template>
-                <div class="link">
-                  <!-- eslint-disable-next-line vue/no-v-html -->
-                  <div class="result-title">
-                    {{ result.meta.title }}
-                  </div>
-                  <!-- eslint-disable-next-line vue/no-v-html -->
-                  <div class="result-excerpt" v-html="result.meta.description"></div>
-                </div>
-                <div
-                  v-if="index === selectedIndex"
-                >
-                  <div class="result-icon-sub">
-                    <svg
-                      class="DocSearch-Hit-Select-Icon"
-                      viewBox="0 0 20 20"
-                    >
-                      <g
-                        stroke="currentColor"
-                        fill="none"
-                        fill-rule="evenodd"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                  <!-- Sub-result: two icons for indentation -->
+                  <template v-else>
+                    <div class="result-icon">
+                      <svg
+                        class="DocSearch-Hit-Tree"
+                        viewBox="0 0 24 54"
                       >
-                        <path d="M18 3v4c0 2-2 4-4 4H2" />
-                        <path d="M8 17l-6-6 6-6" />
-                      </g>
-                    </svg>
+                        <g
+                          v-if="!result.isLastSubResult"
+                          stroke="currentColor"
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M8 6v42M20 27H8.3" />
+                        </g>
+                        <g
+                          v-else
+                          stroke="currentColor"
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M8 6v21M20 27H8.3" />
+                        </g>
+                      </svg>
+                    </div>
+                    <div class="result-icon-sub">
+                      <svg
+                        class="DocSearch-Hit-Hash"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M13 13h4-4V8H7v5h6v4-4H7V8H3h4V3v5h6V3v5h4-4v5zm-6 0v4-4H3h4z"
+                          stroke="currentColor"
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </template>
+                  <div class="link">
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div class="result-title">
+                      {{ result.meta.title }}
+                    </div>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div class="result-excerpt" v-html="result.meta.description"></div>
+                  </div>
+                  <div
+                    v-if="index === selectedIndex"
+                  >
+                    <div class="result-icon-sub">
+                      <svg
+                        class="DocSearch-Hit-Select-Icon"
+                        viewBox="0 0 20 20"
+                      >
+                        <g
+                          stroke="currentColor"
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M18 3v4c0 2-2 4-4 4H2" />
+                          <path d="M8 17l-6-6 6-6" />
+                        </g>
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>

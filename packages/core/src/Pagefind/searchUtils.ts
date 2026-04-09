@@ -6,7 +6,7 @@
 
 import { isNumber } from 'lodash';
 import type {
-  PagefindSearchFragment, PagefindSubResult, PagefindSearchAnchor,
+  PagefindSearchFragment, PagefindSubResult, PagefindSearchAnchor, GroupedSearchResult,
 } from './types.js';
 import { FormattedSearchResult } from './FormattedSearchResult.js';
 
@@ -33,6 +33,32 @@ function parseSubResult(
   result: PagefindSearchFragment,
 ): FormattedSearchResult {
   return new FormattedSearchResult(result, sub);
+}
+
+/**
+ * Obtains the URL pathname that is used for search result grouping.
+ *
+ * @param url The URL of the result, with or without the URL baseUrl..
+ * @returns The string representing the path, or an empty string if the URL is invalid.
+ */
+function getUrlPath(url: string): string {
+  // PagefindSearchFragment may include URL with or without baseUrl depending on configuration.
+  // First, attempt with assumption that baseUrl is present.
+  let full_path = '';
+  const parsed = URL.parse(url);
+  if (parsed !== null) {
+    full_path = parsed.pathname;
+  } else {
+    // If parsing fails, try with a mock baseUrl.
+    // We only need to extract pathname, so the baseUrl does not matter.
+    full_path = URL.parse(url, 'https://example.org')?.pathname || '';
+  }
+
+  // URL is arranged as sub_path_1/../sub_path_n/resource{.html}
+  // We extract sub_path_1/../sub_path_n
+  // TODO: use path instead
+  const parts = full_path.split('/');
+  return parts.slice(0, parts.length - 1).join('/');
 }
 
 /**
@@ -73,12 +99,15 @@ function parseSubResult(
 export function formatPagefindResult(
   result: PagefindSearchFragment,
   count = 10,
-): FormattedSearchResult[] {
+): GroupedSearchResult {
   const { sub_results: subResults, anchors, weighted_locations: weightedLocations } = result;
 
   // If no sub_results, return the main result as a non-sub-result
   if (!subResults || subResults.length === 0) {
-    return [new FormattedSearchResult(result)];
+    return {
+      name: getUrlPath(result.raw_url),
+      results: [new FormattedSearchResult(result)],
+    };
   }
 
   const sortedLocations = [...weightedLocations].sort((a, b) => {
@@ -151,5 +180,8 @@ export function formatPagefindResult(
   // Return main result first, then sub-results
   const mainResult = new FormattedSearchResult(result);
 
-  return [mainResult, ...formattedSubResults];
+  return {
+    name: getUrlPath(result.raw_url),
+    results: [mainResult, ...formattedSubResults],
+  };
 }
