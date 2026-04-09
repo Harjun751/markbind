@@ -56,7 +56,7 @@
 }
 
 /* Dark mode color palette */
-.dark {
+[data-bs-theme="dark"]:root {
   --app-bg: var(--gray1);
   --app-text: #ffffff;
   --lowContrast: #000000;
@@ -114,8 +114,8 @@ div [command-dialog-mask] {
 
 div [command-dialog-wrapper] {
   position: relative;
-  background: #f5f6f7;
-  /* background: var(--gray2); */
+  /*background: #f5f6f7;*/
+   background: var(--gray2);
   border-radius: 6px;
   flex-direction: column;
   margin: 20vh auto auto;
@@ -208,7 +208,7 @@ div [command-dialog-footer] {
   transition-property: none;
   border-radius: 4px;
   margin-top: 4px;
-  background-color: var(--lowContrast);
+  background-color: var(--gray4);
   box-shadow: var(--command-shadow);
 }
 
@@ -532,4 +532,10 @@ div[command-item] {
   .search-dialog .search-results {
     max-height: calc(100vh - 120px);
   }
+}
+
+label.section-header {
+  color: var(--mb-search-brand);
+  font-weight: 900;
+  font-size: 13px;
 }

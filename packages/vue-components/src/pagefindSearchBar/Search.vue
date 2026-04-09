@@ -226,7 +226,7 @@ onUnmounted(() => {
                 v-for="(group, grp_idx) in searchResults"
                 :key="grp_idx"
               >
-                <h1>{{ group.name }}</h1>
+                <label class="section-header">{{ group.name }}</label>
                 <div
                   v-for="(result, index) in group.results"
                   :key="result.route"
@@ -418,8 +418,8 @@ onUnmounted(() => {
         padding: 0 10px 0 12px;
         box-sizing: border-box;
         height: 40px;
-        background-color: var(--mb-bg-alt, #fff);
-        color: #212529;
+        background-color: var(--app-bg);
+        color: var(--app-text);
         border-radius: 8px;
         border: 1px solid var(--mb-search-accent);
         transition: border 0.2s;
@@ -430,7 +430,7 @@ onUnmounted(() => {
     }
 
     .blog-search .nav-search-btn-wait .search-tip {
-        color: var(--mb-search-accent);
+        color: var(--app-text);
         font-size: 1rem;
         padding-left: 8px;
         padding-right: 16px;

@@ -57,8 +57,11 @@ function getUrlPath(url: string): string {
   // URL is arranged as sub_path_1/../sub_path_n/resource{.html}
   // We extract sub_path_1/../sub_path_n
   // TODO: use path instead
-  const parts = full_path.split('/');
-  return parts.slice(0, parts.length - 1).join('/');
+  const parts = full_path.split('/').filter(x => x !== '');
+  const path = parts.slice(0, parts.length - 1).join(' - ');
+
+  // TODO: mapping from site.json
+  return "waow!";
 }
 
 /**
@@ -181,7 +184,7 @@ export function formatPagefindResult(
   const mainResult = new FormattedSearchResult(result);
 
   return {
-    name: getUrlPath(result.raw_url),
+    name: getUrlPath(result.url),
     results: [mainResult, ...formattedSubResults],
   };
 }
